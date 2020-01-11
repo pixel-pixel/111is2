@@ -24,6 +24,7 @@ public class GameStage extends Stage {
     //TODO
     private static final int START_TOP = (Main.HEIGHT - Field.MATRIX_WIDTH) / 4 - 30;
 
+    //kel
     Random random;
     Field field;
     Item[] items;
