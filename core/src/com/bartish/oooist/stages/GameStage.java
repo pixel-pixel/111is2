@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -13,6 +14,7 @@ import com.bartish.oooist.actors.BtnRestart;
 import com.bartish.oooist.actors.Field;
 import com.bartish.oooist.actors.Item;
 import com.bartish.oooist.utils.Executer;
+import com.bartish.oooist.utils.GameColor;
 
 import java.util.Random;
 
@@ -22,11 +24,10 @@ public class GameStage extends Stage {
     private static final float[] START_X = new float[]{Main.WIDTH/4, Main.WIDTH/2, Main.WIDTH/4*3};
     private static int START_DOWN;
 
-    //kel
     private Random random;
     private Field field;
     private Item[] items;
-    private Image gameOver;
+    private Image gameOver, curtain;
     private BtnRestart restart;
     private Executer stopGame, resumeGame, restartGame;
 
@@ -56,7 +57,11 @@ public class GameStage extends Stage {
         gameOver.setScale(2, 2);
         gameOver.setColor(1, 1, 1, 0);
 
+        addActor(curtain);
+        curtain.setColor(GameColor.BACK.r, GameColor.BACK.g, GameColor.BACK.b, 0);
+
         addActor(restart);
+        restart.addAction(moveTo(0, restart.getY(), 0.4f, Interpolation.pow2));
         restart.addExecuter(stopGame, resumeGame, restartGame);
 
     }
@@ -71,13 +76,19 @@ public class GameStage extends Stage {
                 new Item(random.nextInt(4) + 1, START_X[2], START_DOWN)
         };
         gameOver = new Image(new Texture(Gdx.files.internal("gameOver.png")));
+        curtain = new Image(new Texture(Gdx.files.internal("fieldShadow.png")));
         restart = new BtnRestart(Main.WIDTH, Main.HEIGHT);
         stopGame = new Executer() {
             @Override
             public void execute() {
-                field.addAction(alpha(0.4f, 0.4f, Interpolation.fade));
+                field.clearActions();
+                field.addAction(parallel(
+                        alpha(0.4f, 0.4f, Interpolation.fade),
+                        scaleTo(1, 1, 1f, Interpolation.pow5Out)
+                ));
                 for(int i = 0; i < items.length; i++){
                     items[i].setTouchable(Touchable.disabled);
+                    items[i].clearActions();
                     items[i].addAction(parallel(
                             alpha(0.4f, 0.4f, Interpolation.fade),
                             moveTo(items[i].getX(), START_DOWN, 0.4f + i*0.2f, Interpolation.fade)
@@ -101,9 +112,21 @@ public class GameStage extends Stage {
         restartGame = new Executer() {
             @Override
             public void execute() {
-                Main.save.clear();
-                Main.save.flush();
-                Main.newGame();
+                RunnableAction run = new RunnableAction();
+                run.setRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        Main.save.clear();
+                        Main.save.flush();
+                        Main.newGame();
+                    }
+                });
+
+                curtain.addAction(alpha(1, 0.3f, Interpolation.fade));
+                restart.addAction(sequence(
+                        moveTo(68, restart.getY(), 0.3f, Interpolation.pow2),
+                        run
+                ));
             }
         };
     }
@@ -170,6 +193,9 @@ public class GameStage extends Stage {
                 temp.addAction(moveTo(temp.getX(), START_DOWN));
             }
         }
+
+        curtain.setPosition((Main.WIDTH - worldWidth)/2, (Main.HEIGHT - worldHeight)/2);
+        curtain.setSize(worldWidth, worldHeight);
 
         restart.setPosition(
                 Main.WIDTH + (worldWidth - Main.WIDTH) / 2,

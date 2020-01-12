@@ -12,16 +12,17 @@ import com.bartish.oooist.utils.Executer;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 public class BtnRestart extends Actor {
-    Texture restart = new Texture(Gdx.files.internal("btn_restart.png"));
-    Texture ok = new Texture(Gdx.files.internal("btn_ok.png"));
-    float startX, startY;
-    boolean active = false;
-    Executer onActiveExecuter, onDisactiveExecuter, onOkClickExecuter;
-    Vector3 vector3 = new Vector3();
+    private Texture restart = new Texture(Gdx.files.internal("btn_restart.png"));
+    private Texture ok = new Texture(Gdx.files.internal("btn_ok.png"));
+    private float startX, startY;
+    private boolean active = false;
+    private Executer onActiveExecuter, onDisactiveExecuter, onOkClickExecuter;
+    private Vector3 vector3 = new Vector3();
 
     public BtnRestart(int x, int y){
         startX = x;
         startY = y;
+        setX(68);
     }
 
     @Override
