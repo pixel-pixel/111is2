@@ -21,16 +21,14 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class GameStage extends Stage {
     private static final float[] START_X = new float[]{Main.WIDTH/4, Main.WIDTH/2, Main.WIDTH/4*3};
     private static int START_DOWN;
-    //TODO
-    private static final int START_TOP = (Main.HEIGHT - Field.MATRIX_WIDTH) / 4 - 30;
 
     //kel
-    Random random;
-    Field field;
-    Item[] items;
-    Image gameOver;
-    BtnRestart restart;
-    Executer stopGame, resumeGame, restartGame;
+    private Random random;
+    private Field field;
+    private Item[] items;
+    private Image gameOver;
+    private BtnRestart restart;
+    private Executer stopGame, resumeGame, restartGame;
 
     public GameStage(Viewport viewport) {
         super(viewport);
@@ -50,11 +48,7 @@ public class GameStage extends Stage {
 
         ));
 
-
-        for(int i = 0; i < 3; i++){
-            addActor(items[i]);
-            items[i].addAction(moveTo(items[i].getX(), START_TOP, 0.7f + i*0.2f, Interpolation.fade));
-        }
+        for(Item temp : items) addActor(temp);
 
         addActor(gameOver);
         gameOver.setPosition((Main.WIDTH - gameOver.getWidth()) / 2, (Main.HEIGHT - gameOver.getHeight()) / 2);
@@ -114,11 +108,11 @@ public class GameStage extends Stage {
         };
     }
 
-    boolean forGO = true;
+    private boolean forGO = true;
+    private float probY = 0;
     @Override
     public void act(float delta){
         super.act(delta);
-
         //Collisions
         for(int i = 0; i < items.length; i++){
             if(items[i].getX() + items[i].getOriginX() > field.getX() &&
@@ -127,13 +121,15 @@ public class GameStage extends Stage {
             items[i].getY() + items[i].getOriginY() < field.getY() + field.getHeight()){
                 if(items[i].isTouch) items[i].isActive = true;
                 //якщо додали об'єкт на field, забираємо звідси
+                probY = items[i].startY;
                 if(field.addItem(items[i])){
                     Main.changeColor(items[i].getGameColor());
 
                     items[i] = new Item(random.nextInt(4) + 1, START_X[i], START_DOWN);
                     addActor(items[i]);
-                    items[i].addAction(moveTo(items[i].getX(), START_TOP, 0.8f, Interpolation.fade));
-                    items[i].startY =START_TOP;
+                    items[i].startY = probY;
+                    items[i].addAction(moveTo(items[i].getX(), items[i].startY, 0.8f, Interpolation.fade));
+
                 }
             }else if(items[i].isActive){
                 items[i].isActive = false;
@@ -160,7 +156,7 @@ public class GameStage extends Stage {
     public void resize(float worldWidth, float worldHeight){
         if(!field.gameOver() && !restart.isActive()){
             for(int i = 0; i < items.length; i++){
-                items[i].startY = (int)((( field.getY() + (worldHeight - Main.HEIGHT)/2 )/2 - (worldHeight - Main.HEIGHT) / 2) - 30);
+                items[i].startY = (( field.getY() + (worldHeight - Main.HEIGHT)/2 )/2 - (worldHeight - Main.HEIGHT) / 2) - 30;
                 items[i].clearActions();
                 items[i].addAction(sequence(
                         alpha(1f, 0.1f * i),
@@ -170,7 +166,7 @@ public class GameStage extends Stage {
         } else if(restart.isActive()){
             START_DOWN = (int)(Main.HEIGHT - worldHeight) / 2 - 100;
             for(Item temp : items){
-                temp.startY = (int)((( field.getY() + (worldHeight - Main.HEIGHT)/2 )/2 - (worldHeight - Main.HEIGHT) / 2) - 30);
+                temp.startY = (( field.getY() + (worldHeight - Main.HEIGHT)/2 )/2 - (worldHeight - Main.HEIGHT) / 2) - 30;
                 temp.addAction(moveTo(temp.getX(), START_DOWN));
             }
         }
