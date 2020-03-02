@@ -31,6 +31,9 @@ public class GameStage extends Stage {
     private BtnRestart restart;
     private Executer stopGame, resumeGame, restartGame;
 
+    private boolean forGO;
+    private float probY;
+
     public GameStage(Viewport viewport) {
         super(viewport);
         init();
@@ -58,12 +61,12 @@ public class GameStage extends Stage {
         gameOver.setColor(1, 1, 1, 0);
 
         addActor(curtain);
-        curtain.setColor(GameColor.BACK.r, GameColor.BACK.g, GameColor.BACK.b, 0);
+        curtain.setColor(GameColor.X.r, GameColor.X.g, GameColor.X.b, 0);
+        curtain.setTouchable(Touchable.disabled);
 
         addActor(restart);
         restart.addAction(moveTo(0, restart.getY(), 0.4f, Interpolation.pow2));
         restart.addExecuter(stopGame, resumeGame, restartGame);
-
     }
 
     private void init(){
@@ -71,9 +74,9 @@ public class GameStage extends Stage {
         random = new Random();
         field = new Field();
         items = new Item[]{
-                new Item(random.nextInt(4) + 1, START_X[0], START_DOWN),
-                new Item(random.nextInt(4) + 1, START_X[1], START_DOWN),
-                new Item(random.nextInt(4) + 1, START_X[2], START_DOWN)
+                new Item(Main.save.getInteger("item0",random.nextInt(4) + 1), START_X[0], START_DOWN),
+                new Item(Main.save.getInteger("item1",random.nextInt(4) + 1), START_X[1], START_DOWN),
+                new Item(Main.save.getInteger("item2",random.nextInt(4) + 1), START_X[2], START_DOWN)
         };
         gameOver = new Image(new Texture(Gdx.files.internal("gameOver.png")));
         curtain = new Image(new Texture(Gdx.files.internal("fieldShadow.png")));
@@ -122,6 +125,7 @@ public class GameStage extends Stage {
                     }
                 });
 
+                Main.changeColor(GameColor.X);
                 curtain.addAction(alpha(1, 0.3f, Interpolation.fade));
                 restart.addAction(sequence(
                         moveTo(68, restart.getY(), 0.3f, Interpolation.pow2),
@@ -129,13 +133,15 @@ public class GameStage extends Stage {
                 ));
             }
         };
+
+        forGO = true;
+        probY = 0;
     }
 
-    private boolean forGO = true;
-    private float probY = 0;
     @Override
     public void act(float delta){
         super.act(delta);
+
         //Collisions
         for(int i = 0; i < items.length; i++){
             if(items[i].getX() + items[i].getOriginX() > field.getX() &&
@@ -152,7 +158,7 @@ public class GameStage extends Stage {
                     addActor(items[i]);
                     items[i].startY = probY;
                     items[i].addAction(moveTo(items[i].getX(), items[i].startY, 0.8f, Interpolation.fade));
-
+                    save();
                 }
             }else if(items[i].isActive){
                 items[i].isActive = false;
@@ -171,9 +177,15 @@ public class GameStage extends Stage {
                     alpha(1, 1, Interpolation.pow5Out),
                     scaleTo(1, 1, 1, Interpolation.pow5Out)
             ));
-
             stopGame.execute();
         }
+    }
+    //TODO
+    private void save(){
+        Main.save.putInteger("item0", items[0].index);
+        Main.save.putInteger("item1", items[1].index);
+        Main.save.putInteger("item2", items[2].index);
+        Main.save.flush();
     }
 
     public void resize(float worldWidth, float worldHeight){
