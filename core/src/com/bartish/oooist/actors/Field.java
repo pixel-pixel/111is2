@@ -20,17 +20,17 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 
 public class Field extends Group {
-    public static final int MATRIX_WIDTH = 360;
-    public static final int MATRIX_SIZE = 6;
+    private static final int MATRIX_WIDTH = 360;
+    private static final int MATRIX_SIZE = 6;
 
-    Image shadow = new Image(new Texture(Gdx.files.internal("fieldShadow.png")));
-    Image field = new Image(new Texture(Gdx.files.internal("field.png")));
-    Image edges = new Image(new Texture(Gdx.files.internal("edges.png")));
+    private Image shadow = new Image(new Texture(Gdx.files.internal("fieldShadow.png")));
+    private Image field = new Image(new Texture(Gdx.files.internal("field.png")));
+    private Image edges = new Image(new Texture(Gdx.files.internal("edges.png")));
 
-    Item[][] matrix = new Item[MATRIX_SIZE][MATRIX_SIZE];
+    private Item[][] matrix = new Item[MATRIX_SIZE][MATRIX_SIZE];
 
-    Vector2 vector = new Vector2();
-    int matrixPositionX, matrixPositionY;
+    private Vector2 vector = new Vector2();
+    private int matrixPositionX, matrixPositionY;
     public int oldMatrixPositionX = -1, oldMatrixPositionY = -1;
     public Field() {
         super();
@@ -115,7 +115,7 @@ public class Field extends Group {
         matrixPositionX = (int)(vector.x + item.getOriginX())/60;
         matrixPositionY = (int)(vector.y + item.getOriginY())/60;
 
-        if(canTake(item, matrixPositionX, matrixPositionY) && item.isActive){
+        if(canTake(matrixPositionX, matrixPositionY) && item.isActive){
             //Фокусуємо сусідні елементи
             if(matrixPositionX != oldMatrixPositionX || matrixPositionY != oldMatrixPositionY){
                 unfocus();
@@ -163,20 +163,15 @@ public class Field extends Group {
         return false;
     }
     //true якщо можна помістити об'єкт на клітку
-    public boolean canTake(Item item, int x, int y){
-        if(x >= 0 && x < matrix.length && y >= 0 && y < matrix.length){
-            if(matrix[x][y] == null){
-                return true;
-            }
-        }
-        return false;
+    private boolean canTake(int x, int y){
+        return x >= 0 && x < matrix.length && y >= 0 && y < matrix.length && matrix[x][y] == null;
     }
 
-    ArrayList<HashSet<GridPoint2>> focusSet = new ArrayList<>();
-    int focusCount = 0;
-    Item elem;
+    private ArrayList<HashSet<GridPoint2>> focusSet = new ArrayList<>();
+    private int focusCount = 0;
+    private Item elem;
     //
-    public void focus(int index, int x, int y){
+    private void focus(int index, int x, int y){
         focusSet.add(new HashSet<GridPoint2>());
 
         if(focusPlus(index, x, y+1)){

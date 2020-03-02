@@ -13,6 +13,7 @@ import com.bartish.oooist.Main;
 import com.bartish.oooist.actors.BtnRestart;
 import com.bartish.oooist.actors.Field;
 import com.bartish.oooist.actors.Item;
+import com.bartish.oooist.actors.Score;
 import com.bartish.oooist.utils.Executer;
 import com.bartish.oooist.utils.GameColor;
 
@@ -26,6 +27,7 @@ public class GameStage extends Stage {
 
     private Random random;
     private Field field;
+    private Score score;
     private Item[] items;
     private Image gameOver, curtain;
     private BtnRestart restart;
@@ -52,6 +54,11 @@ public class GameStage extends Stage {
 
         ));
 
+        addActor(score);
+        score.setPosition(180, 650);
+        score.addAction(moveTo(180, 542, 1, Interpolation.pow3Out));
+
+
         for(Item temp : items) addActor(temp);
 
         addActor(gameOver);
@@ -73,6 +80,7 @@ public class GameStage extends Stage {
         START_DOWN = -100;
         random = new Random();
         field = new Field();
+        score = new Score(Main.save.getInteger("score", 0));
         items = new Item[]{
                 new Item(Main.save.getInteger("item0",random.nextInt(4) + 1), START_X[0], START_DOWN),
                 new Item(Main.save.getInteger("item1",random.nextInt(4) + 1), START_X[1], START_DOWN),
@@ -152,6 +160,8 @@ public class GameStage extends Stage {
                 //якщо додали об'єкт на field, забираємо звідси
                 probY = items[i].startY;
                 if(field.addItem(items[i])){
+                    score.score++;
+                    System.out.println(score.score);
                     Main.changeColor(items[i].getGameColor());
 
                     items[i] = new Item(random.nextInt(4) + 1, START_X[i], START_DOWN);
@@ -167,7 +177,6 @@ public class GameStage extends Stage {
                 field.oldMatrixPositionY = -1;
             }
         }
-//
         if(field.gameOver() && forGO){
             forGO = false;
             Main.save.clear();
@@ -185,6 +194,7 @@ public class GameStage extends Stage {
         Main.save.putInteger("item0", items[0].index);
         Main.save.putInteger("item1", items[1].index);
         Main.save.putInteger("item2", items[2].index);
+        Main.save.putInteger("score", score.score);
         Main.save.flush();
     }
 
