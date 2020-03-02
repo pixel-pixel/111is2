@@ -167,7 +167,7 @@ public class GameStage extends Stage {
                 field.oldMatrixPositionY = -1;
             }
         }
-
+//
         if(field.gameOver() && forGO){
             forGO = false;
             Main.save.clear();
