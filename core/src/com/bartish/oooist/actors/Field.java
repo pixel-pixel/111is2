@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
 import com.bartish.oooist.Main;
@@ -22,6 +23,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class Field extends Group {
     private static final int MATRIX_WIDTH = 360;
     private static final int MATRIX_SIZE = 6;
+
+    private static final float TIME_OF_PULSE_ITEM = 0.3f;
 
     private Image shadow = new Image(new Texture(Gdx.files.internal("fieldShadow.png")));
     private Image field = new Image(new Texture(Gdx.files.internal("field.png")));
@@ -106,6 +109,7 @@ public class Field extends Group {
         super.draw(batch, parentAlpha);
     }
 
+    int countOfFocusItems;
     public boolean addItem(Item item){
         //Знаходимо індекси матриці для item
         vector.set(0, 0);
@@ -134,23 +138,33 @@ public class Field extends Group {
                 item.startX = matrixPositionX * 60 + 2;
                 item.startY = matrixPositionY * 60 + 2;
 
-                item.addAction(parallel(
-                        moveTo(item.startX, item.startY, 0.5f, Interpolation.fade),
-                        scaleTo(1,1, 0.5f, Interpolation.pow3Out)
-                ));
-
+                countOfFocusItems = 0;
                 if(focusSet.size() > 0){
                     item.changeIndex(item.index + focusSet.size() * 2);
                     Main.save.putInteger(matrixPositionX+"_"+matrixPositionY, item.index);
 
                     for(HashSet<GridPoint2> temp1 : focusSet){
                         for(GridPoint2 temp2 : temp1){
-                            removeActor(matrix[temp2.x][temp2.y]);
+                            //removeActor(matrix[temp2.x][temp2.y]);
+                            matrix[temp2.x][temp2.y].clearActions();
+                            matrix[temp2.x][temp2.y].addAction(
+                                    delay(countOfFocusItems * TIME_OF_PULSE_ITEM / 3, sequence(
+                                            parallel(
+                                                    moveTo(vector.x, vector.y, TIME_OF_PULSE_ITEM, Interpolation.pow2In),
+                                                    scaleTo(0.7f, 0.7f, TIME_OF_PULSE_ITEM, Interpolation.pow2In),
+                                                    alpha(0.7f, TIME_OF_PULSE_ITEM, Interpolation.pow2In)),
+                                            Actions.removeActor(matrix[temp2.x][temp2.y])
+                                    )));
+                            countOfFocusItems++;
                             matrix[temp2.x][temp2.y] = null;
                             Main.save.putInteger(temp2.x+"_"+temp2.y, -1);
                         }
                     }
                 }
+
+                item.addAction(delay(countOfFocusItems * TIME_OF_PULSE_ITEM / 3,  parallel(
+                                moveTo(item.startX, item.startY, 0.5f, Interpolation.fade),
+                                scaleTo(1,1, 0.5f, Interpolation.pow3Out))));
                 Main.save.flush();
                 return true;
             }

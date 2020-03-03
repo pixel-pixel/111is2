@@ -161,7 +161,6 @@ public class GameStage extends Stage {
                 probY = items[i].startY;
                 if(field.addItem(items[i])){
                     score.score++;
-                    System.out.println(score.score);
                     Main.changeColor(items[i].getGameColor());
 
                     items[i] = new Item(random.nextInt(4) + 1, START_X[i], START_DOWN);
