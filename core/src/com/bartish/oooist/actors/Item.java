@@ -71,12 +71,8 @@ public class Item extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-//        if(getColor().a == 1)
-//            batch.setColor(color.r, color.g, color.b, getParent().getColor().a);
-//        else
-//            batch.setColor(color.r, color.g, color.b, getColor().a);
-
-        batch.setColor(getColor().r, getColor().g, getColor().b, getParent().getColor().a);
+        if(getColor().a == 1) batch.setColor(getColor().r, getColor().g, getColor().b, getParent().getColor().a);
+        else batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a);
         batch.draw(back,
                 getX(), getY(),
                 getOriginX(), getOriginY(),
@@ -86,12 +82,8 @@ public class Item extends Actor {
                 0, 0,
                 back.getWidth(), back.getHeight(),
                 false, false);
-        batch.setColor(1, 1, 1, getParent().getColor().a);
-
-//        if(getColor().a == 1)
-//            batch.setColor(1, 1, 1, getParent().getColor().a);
-//        else
-//            batch.setColor(1, 1, 1, getColor().a);
+        if(getColor().a == 1) batch.setColor(1, 1, 1, getParent().getColor().a);
+        else batch.setColor(1, 1, 1, getColor().a);
 
         batch.draw(number,
                 getX(), getY(),
@@ -104,15 +96,10 @@ public class Item extends Actor {
                 false, false);
     }
 
-//    public GameColors getGameColor(){
-//        return color;
-//    }
-
     public void changeIndex(int index){
         this.index = index;
         endColor = GameColors.getColor(index);
         addAction(color(endColor, 0.5f, Interpolation.fade));
-//        this.color = GameColors.getColor(index);
         number = new Texture(Gdx.files.internal("item" + index + ".png"));
     }
 

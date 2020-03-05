@@ -38,8 +38,7 @@ public class Field extends Group {
     public int oldMatrixPositionX = -1, oldMatrixPositionY = -1;
     public Field() {
         super();
-        setBounds((Main.WIDTH - MATRIX_WIDTH) / 2,
-                (Main.HEIGHT - MATRIX_WIDTH) / 2,
+        setBounds(0, 0,
                 MATRIX_WIDTH, MATRIX_WIDTH);
         setOrigin(Align.center);
 
@@ -112,8 +111,6 @@ public class Field extends Group {
 
     private int countOfFocusItems;
     public boolean addItem(Item item){
-        //addAction(color(Color.BLUE, 0,  Interpolation.bounce));
-        //Знаходимо індекси матриці для item
         vector.set(0, 0);
         item.localToActorCoordinates(field, vector);
 
@@ -267,7 +264,7 @@ public class Field extends Group {
         }
         return true;
     }
-    public void isEdges(boolean is){
+    public void edges(boolean is){
         if(!edges.hasActions()){
             if(is){
                 edges.addAction(alpha(1, 0.12f));
@@ -275,6 +272,5 @@ public class Field extends Group {
                 edges.addAction(alpha(0, 0.12f));
             }
         }
-
     }
 }

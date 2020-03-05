@@ -35,6 +35,7 @@ public class GameStage extends Stage {
     private Image gameOver, curtain;
     private BtnRestart restart;
     private Executer stopGame, resumeGame, restartGame;
+    private float worldWidth = 0, worldHeight = 0;
 
     private boolean forGO;
     private float probY;
@@ -59,8 +60,9 @@ public class GameStage extends Stage {
         ));
 
         addActor(score);
-        score.setPosition(180, 650);
-        score.addAction(moveTo(180, 542, 1, Interpolation.pow3Out));
+        score.setY(worldHeight + 100);
+        score.addAction(moveTo(worldWidth / 2, worldHeight - (worldHeight - field.getHeight()) / 4,
+                1, Interpolation.pow3Out));
 
 
         for(Item temp : items) addActor(temp);
@@ -101,15 +103,14 @@ public class GameStage extends Stage {
                 field.clearActions();
                 field.addAction(parallel(
                         alpha(0.4f, 0.4f, Interpolation.fade),
-                        scaleTo(1, 1, 1f, Interpolation.pow5Out)
+                        scaleTo(1, 1, 1f, Interpolation.pow3Out)
                 ));
                 for(int i = 0; i < items.length; i++){
                     items[i].setTouchable(Touchable.disabled);
                     items[i].clearActions();
-                    items[i].addAction(parallel(
-                            alpha(0.4f, 0.4f, Interpolation.fade),
-                            moveTo(items[i].getX(), START_DOWN, 0.4f + i*0.2f, Interpolation.fade)
-                    ));
+                    items[i].addAction(parallel(alpha(0.4f, 0.4f, Interpolation.fade) , delay(i * 0.1f,
+                            moveTo(items[i].getX(), START_DOWN, 0.3f, Interpolation.pow3In)
+                    )));
                 }
             }
         };
@@ -119,10 +120,10 @@ public class GameStage extends Stage {
                 field.addAction(alpha(1, 0.4f, Interpolation.fade));
                 for(int i = 0; i < items.length; i++){
                     items[i].setTouchable(Touchable.enabled);
-                    items[i].addAction(parallel(
-                            alpha(1, 0.4f, Interpolation.fade),
-                            moveTo(items[i].getX(), items[i].startY, 0.35f + i*0.17f, Interpolation.fade)
-                    ));
+                    items[i].addAction(delay(i * 0.08f,parallel(
+                            alpha(1, 0.8f, Interpolation.fade),
+                            moveTo(items[i].getX(), items[i].startY, 0.5f, Interpolation.pow3Out)
+                    )));
                 }
             }
         };
@@ -210,31 +211,24 @@ public class GameStage extends Stage {
     }
 
     public void resize(float worldWidth, float worldHeight){
-        if(!field.gameOver() && !restart.isActive()){
-            for(int i = 0; i < items.length; i++){
-                items[i].startY = (( field.getY() + (worldHeight - Main.HEIGHT)/2 )/2 - (worldHeight - Main.HEIGHT) / 2) - 30;
+        this.worldWidth = worldWidth;
+        this.worldHeight = worldHeight;
+
+        restart.setPosition(worldWidth, worldHeight);
+        field.setPosition((worldWidth - field.getWidth()) / 2, (worldHeight - field.getHeight()) / 2);
+        field.edges(worldWidth == Main.WIDTH);
+        score.setPosition(worldWidth / 2, worldHeight - (worldHeight - field.getHeight()) / 4);
+        if(!restart.isActive()) {
+            for (int i = 0; i < items.length; i++) {
+                items[i].startY = (worldHeight - field.getHeight()) / 4 - items[i].getHeight() / 2;
+                items[i].startX = worldWidth / (items.length + 1) * (i + 1) - items[i].getWidth() / 2;
+                START_X[i] = items[i].startX + items[i].getWidth()/2;
                 items[i].clearActions();
-                items[i].addAction(sequence(
-                        alpha(1f, 0.1f * i),
-                        moveTo(items[i].startX, items[i].startY, 0.7f + i*0.2f, Interpolation.fade)
-                ));
-            }
-        } else if(restart.isActive()){
-            START_DOWN = (int)(Main.HEIGHT - worldHeight) / 2 - 100;
-            for(Item temp : items){
-                temp.startY = (( field.getY() + (worldHeight - Main.HEIGHT)/2 )/2 - (worldHeight - Main.HEIGHT) / 2) - 30;
-                temp.addAction(moveTo(temp.getX(), START_DOWN));
+                items[i].addAction(delay((i + 1) * 0.08f, moveTo(items[i].startX, items[i].startY, 0.8f, Interpolation.pow3Out)));
             }
         }
-
-        curtain.setPosition((Main.WIDTH - worldWidth)/2, (Main.HEIGHT - worldHeight)/2);
-        curtain.setSize(worldWidth, worldHeight);
-
-        restart.setPosition(
-                Main.WIDTH + (worldWidth - Main.WIDTH) / 2,
-                Main.HEIGHT + (worldHeight - Main.HEIGHT) / 2);
-
-        field.isEdges(worldWidth == Main.WIDTH);
+        curtain.setBounds(0, 0, worldWidth, worldHeight);
+        gameOver.setPosition((worldWidth - gameOver.getWidth()) / 2, (worldHeight - gameOver.getHeight()) / 2);
     }
 
     private void changeColor(Color c){

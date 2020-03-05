@@ -18,7 +18,6 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class Main extends ApplicationAdapter {
 	public static int WIDTH = 360, HEIGHT = 600;
 	public static Preferences save;
-	//public static Color mainColor = GameColors.BACK, minorColor = GameColors.BACK;
 
 	private static GameStage gameStage;
 	public static ExtendViewport viewport;
@@ -34,27 +33,18 @@ public class Main extends ApplicationAdapter {
 		gameStage = new GameStage(viewport);
 		Gdx.input.setInputProcessor(gameStage);
 		gameStage.setKeyboardFocus(gameStage.getActors().get(0));
-
-		//background.addAction(color(GameColors.BACK));
 	}
 
 	@Override
 	public void render () {
-//		if(!mainColor.equals(minorColor)){
-//			mainColor.r -= (mainColor.r - minorColor.r)/10f;
-//			mainColor.g -= (mainColor.g - minorColor.g)/10f;
-//			mainColor.b -= (mainColor.b - minorColor.b)/10f;
-//		}
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		//Gdx.gl.glClearColor(background.getColor().r, background.getColor().g, background.getColor().b, 1);
-		//System.out.println(background.getColor().r);
 		gameStage.act(Gdx.graphics.getDeltaTime());
 		gameStage.draw();
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		viewport.update(width, height, false);
+		viewport.update(width, height, true);
 		gameStage.resize(viewport.getWorldWidth(), viewport.getWorldHeight());
 	}
 }
