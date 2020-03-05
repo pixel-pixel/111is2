@@ -1,6 +1,7 @@
 package com.bartish.oooist.actors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;
@@ -8,13 +9,13 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.bartish.oooist.utils.GameColor;
+import com.bartish.oooist.utils.GameColors;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 public class Item extends Actor {
     private Texture number, back;
-    private GameColor color;
+    private Color endColor;
 
     public  float startX, startY;
     public int index;
@@ -24,8 +25,9 @@ public class Item extends Actor {
     public Item(int index, float x, float y){
         number = new Texture(Gdx.files.internal("item" + index + ".png"));
         back = new Texture(Gdx.files.internal("itemFill.png"));
+        endColor = GameColors.getColor(index);
 
-        color = GameColor.getColor(index);
+        setColor(endColor);
 
         startX = x - number.getWidth()/2;
         startY = y - number.getHeight()/2;
@@ -69,11 +71,12 @@ public class Item extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        if(getColor().a == 1)
-            batch.setColor(color.r, color.g, color.b, getParent().getColor().a);
-        else
-            batch.setColor(color.r, color.g, color.b, getColor().a);
+//        if(getColor().a == 1)
+//            batch.setColor(color.r, color.g, color.b, getParent().getColor().a);
+//        else
+//            batch.setColor(color.r, color.g, color.b, getColor().a);
 
+        batch.setColor(getColor().r, getColor().g, getColor().b, getParent().getColor().a);
         batch.draw(back,
                 getX(), getY(),
                 getOriginX(), getOriginY(),
@@ -83,11 +86,12 @@ public class Item extends Actor {
                 0, 0,
                 back.getWidth(), back.getHeight(),
                 false, false);
+        batch.setColor(1, 1, 1, getParent().getColor().a);
 
-        if(getColor().a == 1)
-            batch.setColor(1, 1, 1, getParent().getColor().a);
-        else
-            batch.setColor(1, 1, 1, getColor().a);
+//        if(getColor().a == 1)
+//            batch.setColor(1, 1, 1, getParent().getColor().a);
+//        else
+//            batch.setColor(1, 1, 1, getColor().a);
 
         batch.draw(number,
                 getX(), getY(),
@@ -100,13 +104,19 @@ public class Item extends Actor {
                 false, false);
     }
 
-    public GameColor getGameColor(){
-        return color;
-    }
+//    public GameColors getGameColor(){
+//        return color;
+//    }
 
     public void changeIndex(int index){
         this.index = index;
-        this.color = GameColor.getColor(index);
+        endColor = GameColors.getColor(index);
+        addAction(color(endColor, 0.5f, Interpolation.fade));
+//        this.color = GameColors.getColor(index);
         number = new Texture(Gdx.files.internal("item" + index + ".png"));
+    }
+
+    public Color getEndColor(){
+        return endColor;
     }
 }

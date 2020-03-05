@@ -1,6 +1,7 @@
 package com.bartish.oooist.actors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.GridPoint2;
@@ -109,8 +110,9 @@ public class Field extends Group {
         super.draw(batch, parentAlpha);
     }
 
-    int countOfFocusItems;
+    private int countOfFocusItems;
     public boolean addItem(Item item){
+        //addAction(color(Color.BLUE, 0,  Interpolation.bounce));
         //Знаходимо індекси матриці для item
         vector.set(0, 0);
         item.localToActorCoordinates(field, vector);

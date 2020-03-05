@@ -1,8 +1,10 @@
 package com.bartish.oooist.stages;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
@@ -15,7 +17,7 @@ import com.bartish.oooist.actors.Field;
 import com.bartish.oooist.actors.Item;
 import com.bartish.oooist.actors.Score;
 import com.bartish.oooist.utils.Executer;
-import com.bartish.oooist.utils.GameColor;
+import com.bartish.oooist.utils.GameColors;
 
 import java.util.Random;
 
@@ -26,6 +28,7 @@ public class GameStage extends Stage {
     private static int START_DOWN;
 
     private Random random;
+    private Actor background;
     private Field field;
     private Score score;
     private Item[] items;
@@ -44,6 +47,7 @@ public class GameStage extends Stage {
         if(Main.save.getBoolean("isSave", false)) field.load();
         else field.create();
 
+        addActor(background);
 
         addActor(field);
         field.setColor(1,1,1,0);
@@ -68,7 +72,7 @@ public class GameStage extends Stage {
         gameOver.setColor(1, 1, 1, 0);
 
         addActor(curtain);
-        curtain.setColor(GameColor.X.r, GameColor.X.g, GameColor.X.b, 0);
+        curtain.setColor(GameColors.X.r, GameColors.X.g, GameColors.X.b, 0);
         curtain.setTouchable(Touchable.disabled);
 
         addActor(restart);
@@ -79,6 +83,8 @@ public class GameStage extends Stage {
     private void init(){
         START_DOWN = -100;
         random = new Random();
+        background = new Actor();
+        background.setColor(GameColors.BACK);
         field = new Field();
         score = new Score(Main.save.getInteger("score", 0));
         items = new Item[]{
@@ -133,7 +139,7 @@ public class GameStage extends Stage {
                     }
                 });
 
-                Main.changeColor(GameColor.X);
+                changeColor(GameColors.X);
                 curtain.addAction(alpha(1, 0.3f, Interpolation.fade));
                 restart.addAction(sequence(
                         moveTo(68, restart.getY(), 0.3f, Interpolation.pow2),
@@ -161,7 +167,7 @@ public class GameStage extends Stage {
                 probY = items[i].startY;
                 if(field.addItem(items[i])){
                     score.score++;
-                    Main.changeColor(items[i].getGameColor());
+                    changeColor(items[i].getEndColor());
 
                     items[i] = new Item(random.nextInt(4) + 1, START_X[i], START_DOWN);
                     addActor(items[i]);
@@ -197,6 +203,12 @@ public class GameStage extends Stage {
         Main.save.flush();
     }
 
+    @Override
+    public void draw() {
+        Gdx.gl.glClearColor(background.getColor().r, background.getColor().g, background.getColor().b, 1);
+        super.draw();
+    }
+
     public void resize(float worldWidth, float worldHeight){
         if(!field.gameOver() && !restart.isActive()){
             for(int i = 0; i < items.length; i++){
@@ -223,5 +235,9 @@ public class GameStage extends Stage {
                 Main.HEIGHT + (worldHeight - Main.HEIGHT) / 2);
 
         field.isEdges(worldWidth == Main.WIDTH);
+    }
+
+    private void changeColor(Color c){
+        background.addAction(color(c, 0.5f, Interpolation.fade));
     }
 }
