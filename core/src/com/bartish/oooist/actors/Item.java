@@ -94,6 +94,7 @@ public class Item extends Actor {
                 0, 0,
                 number.getWidth(), number.getHeight(),
                 false, false);
+        batch.setColor(1, 1, 1, 1);
     }
 
     public void changeIndex(int index){

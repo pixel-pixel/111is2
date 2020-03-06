@@ -15,6 +15,7 @@ import com.bartish.oooist.Main;
 import com.bartish.oooist.actors.BtnRestart;
 import com.bartish.oooist.actors.Field;
 import com.bartish.oooist.actors.Item;
+import com.bartish.oooist.actors.Record;
 import com.bartish.oooist.actors.Score;
 import com.bartish.oooist.utils.Executer;
 import com.bartish.oooist.utils.GameColors;
@@ -31,6 +32,7 @@ public class GameStage extends Stage {
     private Actor background;
     private Field field;
     private Score score;
+    private Record record;
     private Item[] items;
     private Image gameOver, curtain;
     private BtnRestart restart;
@@ -56,7 +58,6 @@ public class GameStage extends Stage {
         field.addAction(parallel(
                 alpha(1, 1.5f, Interpolation.pow5Out),
                 scaleTo(1, 1, 1.5f, Interpolation.pow5Out)
-
         ));
 
         addActor(score);
@@ -64,14 +65,18 @@ public class GameStage extends Stage {
         score.addAction(moveTo(worldWidth / 2, worldHeight - (worldHeight - field.getHeight()) / 4,
                 1, Interpolation.pow3Out));
 
-
         for(Item temp : items) addActor(temp);
 
         addActor(gameOver);
-        gameOver.setPosition((Main.WIDTH - gameOver.getWidth()) / 2, (Main.HEIGHT - gameOver.getHeight()) / 2);
+        gameOver.setPosition((worldWidth - gameOver.getWidth()) / 2, (worldHeight - gameOver.getHeight()) / 2);
         gameOver.setOrigin(Align.center);
         gameOver.setScale(2, 2);
         gameOver.setColor(1, 1, 1, 0);
+
+
+        addActor(record);
+        record.setY(START_DOWN);
+        record.setColor(1, 1, 1, 0.4f);
 
         addActor(curtain);
         curtain.setColor(GameColors.X.r, GameColors.X.g, GameColors.X.b, 0);
@@ -89,6 +94,7 @@ public class GameStage extends Stage {
         background.setColor(GameColors.BACK);
         field = new Field();
         score = new Score(Main.save.getInteger("score", 0));
+        record = new Record(Main.save.getInteger("record", 0));
         items = new Item[]{
                 new Item(Main.save.getInteger("item0",random.nextInt(4) + 1), START_X[0], START_DOWN),
                 new Item(Main.save.getInteger("item1",random.nextInt(4) + 1), START_X[1], START_DOWN),
@@ -105,6 +111,7 @@ public class GameStage extends Stage {
                         alpha(0.4f, 0.4f, Interpolation.fade),
                         scaleTo(1, 1, 1f, Interpolation.pow3Out)
                 ));
+                score.addAction(alpha(0.4f, 0.4f, Interpolation.fade));
                 for(int i = 0; i < items.length; i++){
                     items[i].setTouchable(Touchable.disabled);
                     items[i].clearActions();
@@ -112,19 +119,30 @@ public class GameStage extends Stage {
                             moveTo(items[i].getX(), START_DOWN, 0.3f, Interpolation.pow3In)
                     )));
                 }
+                record.addAction(moveTo(record.getX(), (worldHeight - field.getHeight()) / 4, 0.5f, Interpolation.pow3Out));
+                //record.addAction(moveTo(record.getX(),score.getY(), 0.5f, Interpolation.pow3Out));
             }
         };
         resumeGame = new Executer() {
             @Override
             public void execute() {
                 field.addAction(alpha(1, 0.4f, Interpolation.fade));
+                score.addAction(alpha(1, 0.4f, Interpolation.fade));
                 for(int i = 0; i < items.length; i++){
+                    items[i].startY = (worldHeight - field.getHeight()) / 4 - items[i].getHeight() / 2;
+                    items[i].startX = worldWidth / (items.length + 1) * (i + 1) - items[i].getWidth() / 2;
+                    START_X[i] = items[i].startX + items[i].getWidth()/2;
                     items[i].setTouchable(Touchable.enabled);
-                    items[i].addAction(delay(i * 0.08f,parallel(
-                            alpha(1, 0.8f, Interpolation.fade),
-                            moveTo(items[i].getX(), items[i].startY, 0.5f, Interpolation.pow3Out)
+                    items[i].addAction(parallel(alpha(1, 0.4f, Interpolation.fade), delay(i * 0.08f,
+                            moveTo(items[i].startX, items[i].startY, 0.5f, Interpolation.pow3Out)
                     )));
                 }
+                record.addAction(moveTo(record.getX(), START_DOWN, 0.5f, Interpolation.pow3Out));
+
+                for (int i = 0; i < items.length; i++) {
+
+                }
+                //record.addAction(moveTo(record.getX(), START_DOWN, 0.5f, Interpolation.pow3Out));
             }
         };
         restartGame = new Executer() {
@@ -135,6 +153,7 @@ public class GameStage extends Stage {
                     @Override
                     public void run() {
                         Main.save.clear();
+                        Main.save.putInteger("record", record.count);
                         Main.save.flush();
                         Main.newGame();
                     }
@@ -156,7 +175,6 @@ public class GameStage extends Stage {
     @Override
     public void act(float delta){
         super.act(delta);
-
         //Collisions
         for(int i = 0; i < items.length; i++){
             if(items[i].getX() + items[i].getOriginX() > field.getX() &&
@@ -167,13 +185,15 @@ public class GameStage extends Stage {
                 //якщо додали об'єкт на field, забираємо звідси
                 probY = items[i].startY;
                 if(field.addItem(items[i])){
-                    score.score++;
+                    score.count++;
                     changeColor(items[i].getEndColor());
 
                     items[i] = new Item(random.nextInt(4) + 1, START_X[i], START_DOWN);
                     addActor(items[i]);
                     items[i].startY = probY;
                     items[i].addAction(moveTo(items[i].getX(), items[i].startY, 0.8f, Interpolation.fade));
+
+                    if(score.count > record.count) record.count = score.count;
                     save();
                 }
             }else if(items[i].isActive){
@@ -200,7 +220,8 @@ public class GameStage extends Stage {
         Main.save.putInteger("item0", items[0].index);
         Main.save.putInteger("item1", items[1].index);
         Main.save.putInteger("item2", items[2].index);
-        Main.save.putInteger("score", score.score);
+        Main.save.putInteger("score", score.count);
+        Main.save.putInteger("record", record.count);
         Main.save.flush();
     }
 
@@ -226,9 +247,13 @@ public class GameStage extends Stage {
                 items[i].clearActions();
                 items[i].addAction(delay((i + 1) * 0.08f, moveTo(items[i].startX, items[i].startY, 0.8f, Interpolation.pow3Out)));
             }
+        }else{
+            record.setY((worldHeight - field.getHeight()) / 4);
         }
+        record.setX(worldWidth / 2);
         curtain.setBounds(0, 0, worldWidth, worldHeight);
         gameOver.setPosition((worldWidth - gameOver.getWidth()) / 2, (worldHeight - gameOver.getHeight()) / 2);
+        //record.setPosition(worldWidth / 2, worldHeight - (worldHeight - field.getHeight()) / 4);
     }
 
     private void changeColor(Color c){

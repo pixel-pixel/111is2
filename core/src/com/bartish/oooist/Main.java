@@ -3,17 +3,9 @@ package com.bartish.oooist;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.bartish.oooist.stages.GameStage;
-import com.bartish.oooist.utils.GameColors;
-import com.bartish.oooist.utils.MyActor;
-
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 public class Main extends ApplicationAdapter {
 	public static int WIDTH = 360, HEIGHT = 600;
