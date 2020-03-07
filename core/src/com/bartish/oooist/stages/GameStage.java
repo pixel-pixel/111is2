@@ -65,6 +65,10 @@ public class GameStage extends Stage {
         score.addAction(moveTo(worldWidth / 2, worldHeight - (worldHeight - field.getHeight()) / 4,
                 1, Interpolation.pow3Out));
 
+        addActor(record);
+        record.setY(START_DOWN);
+        record.setColor(1, 1, 1, 0.4f);
+
         for(Item temp : items) addActor(temp);
 
         addActor(gameOver);
@@ -72,11 +76,6 @@ public class GameStage extends Stage {
         gameOver.setOrigin(Align.center);
         gameOver.setScale(2, 2);
         gameOver.setColor(1, 1, 1, 0);
-
-
-        addActor(record);
-        record.setY(START_DOWN);
-        record.setColor(1, 1, 1, 0.4f);
 
         addActor(curtain);
         curtain.setColor(GameColors.X.r, GameColors.X.g, GameColors.X.b, 0);
@@ -142,7 +141,6 @@ public class GameStage extends Stage {
                 for (int i = 0; i < items.length; i++) {
 
                 }
-                //record.addAction(moveTo(record.getX(), START_DOWN, 0.5f, Interpolation.pow3Out));
             }
         };
         restartGame = new Executer() {
