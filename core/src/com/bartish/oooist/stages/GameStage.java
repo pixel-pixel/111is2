@@ -137,10 +137,6 @@ public class GameStage extends Stage {
                     )));
                 }
                 record.addAction(moveTo(record.getX(), START_DOWN, 0.5f, Interpolation.pow3Out));
-
-                for (int i = 0; i < items.length; i++) {
-
-                }
             }
         };
         restartGame = new Executer() {
@@ -179,14 +175,14 @@ public class GameStage extends Stage {
             items[i].getX() + items[i].getOriginX() < field.getX() + field.getWidth() &&
             items[i].getY() + items[i].getOriginY() > field.getY() &&
             items[i].getY() + items[i].getOriginY() < field.getY() + field.getHeight()){
-                if(items[i].isTouch) items[i].isActive = true;
+                if(items[i].isTouch()) items[i].setActive(true);
                 //якщо додали об'єкт на field, забираємо звідси
                 probY = items[i].startY;
                 if(field.addItem(items[i])){
                     score.count++;
                     changeColor(items[i].getEndColor());
 
-                    items[i] = new Item(random.nextInt(4) + 1, START_X[i], START_DOWN);
+                    items[i] = new Item(random.nextInt(4) + 1, START_X[i] - items[i].getWidth() / 2, START_DOWN);
                     addActor(items[i]);
                     items[i].startY = probY;
                     items[i].addAction(moveTo(items[i].getX(), items[i].startY, 0.8f, Interpolation.fade));
@@ -194,8 +190,8 @@ public class GameStage extends Stage {
                     if(score.count > record.count) record.count = score.count;
                     save();
                 }
-            }else if(items[i].isActive){
-                items[i].isActive = false;
+            }else if(items[i].isActive()){
+                items[i].setActive(false);
                 field.unfocus();
                 field.oldMatrixPositionX = -1;
                 field.oldMatrixPositionY = -1;
@@ -234,24 +230,23 @@ public class GameStage extends Stage {
         this.worldHeight = worldHeight;
 
         restart.setPosition(worldWidth, worldHeight);
-        field.setPosition((worldWidth - field.getWidth()) / 2, (worldHeight - field.getHeight()) / 2);
+        field.setPosition((int)((worldWidth - field.getWidth()) / 2), (int)((worldHeight - field.getHeight()) / 2));
         field.edges(worldWidth == Main.WIDTH);
-        score.setPosition(worldWidth / 2, worldHeight - (worldHeight - field.getHeight()) / 4);
+        score.setPosition((int)(worldWidth / 2), (int)(worldHeight - (worldHeight - field.getHeight()) / 4));
         if(!restart.isActive()) {
             for (int i = 0; i < items.length; i++) {
-                items[i].startY = (worldHeight - field.getHeight()) / 4 - items[i].getHeight() / 2;
-                items[i].startX = worldWidth / (items.length + 1) * (i + 1) - items[i].getWidth() / 2;
+                items[i].startY = (int)((worldHeight - field.getHeight()) / 4 - items[i].getHeight() / 2);
+                items[i].startX = (int)(worldWidth / (items.length + 1) * (i + 1) - items[i].getWidth() / 2);
                 START_X[i] = items[i].startX + items[i].getWidth()/2;
                 items[i].clearActions();
                 items[i].addAction(delay((i + 1) * 0.08f, moveTo(items[i].startX, items[i].startY, 0.8f, Interpolation.pow3Out)));
             }
         }else{
-            record.setY((worldHeight - field.getHeight()) / 4);
+            record.setY((int)((worldHeight - field.getHeight()) / 4));
         }
-        record.setX(worldWidth / 2);
+        record.setX((int)(worldWidth / 2));
         curtain.setBounds(0, 0, worldWidth, worldHeight);
-        gameOver.setPosition((worldWidth - gameOver.getWidth()) / 2, (worldHeight - gameOver.getHeight()) / 2);
-        //record.setPosition(worldWidth / 2, worldHeight - (worldHeight - field.getHeight()) / 4);
+        gameOver.setPosition((int)((worldWidth - gameOver.getWidth()) / 2), (int)((worldHeight - gameOver.getHeight()) / 2));
     }
 
     private void changeColor(Color c){

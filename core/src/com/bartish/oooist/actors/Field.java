@@ -1,7 +1,6 @@
 package com.bartish.oooist.actors;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.GridPoint2;
@@ -22,7 +21,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 
 public class Field extends Group {
-    private static final int MATRIX_WIDTH = 360;
+    private static final int MATRIX_WIDTH_HIGHT = 360;
     private static final int MATRIX_SIZE = 6;
 
     private static final float TIME_OF_PULSE_ITEM = 0.3f;
@@ -39,16 +38,16 @@ public class Field extends Group {
     public Field() {
         super();
         setBounds(0, 0,
-                MATRIX_WIDTH, MATRIX_WIDTH);
+                MATRIX_WIDTH_HIGHT, MATRIX_WIDTH_HIGHT);
         setOrigin(Align.center);
 
         addActor(shadow);
-        shadow.setBounds(-10000,-7, 20000, MATRIX_WIDTH + 14);
+        shadow.setBounds(-10000,-7, 20000, MATRIX_WIDTH_HIGHT + 14);
         shadow.setColor(0,0,0,0.25f);
 
         addActor(field);
-        field.setPosition((MATRIX_WIDTH - field.getWidth()) / 2,
-                (MATRIX_WIDTH - field.getHeight()) / 2);
+        field.setPosition((MATRIX_WIDTH_HIGHT - field.getWidth()) / 2,
+                (MATRIX_WIDTH_HIGHT - field.getHeight()) / 2);
         addActor(edges);
         edges.setPosition(field.getX(), field.getY());
     }
@@ -118,7 +117,7 @@ public class Field extends Group {
         matrixPositionX = (int)(vector.x + item.getOriginX())/60;
         matrixPositionY = (int)(vector.y + item.getOriginY())/60;
 
-        if(canTake(matrixPositionX, matrixPositionY) && item.isActive){
+        if(canTake(matrixPositionX, matrixPositionY) && item.isActive()){
             //Фокусуємо сусідні елементи
             if(matrixPositionX != oldMatrixPositionX || matrixPositionY != oldMatrixPositionY){
                 unfocus();
@@ -127,7 +126,8 @@ public class Field extends Group {
                 oldMatrixPositionY = matrixPositionY;
             }
             //Додаємо на поле
-            if(!item.isTouch){
+            if(!item.isTouch()){
+                System.out.println(1);
                 addActor(item);
                 matrix[matrixPositionX][matrixPositionY] = item;
                 Main.save.putInteger(matrixPositionX+"_"+matrixPositionY, item.index);
@@ -168,7 +168,7 @@ public class Field extends Group {
                 return true;
             }
         }else{
-            item.isActive = false;
+            item.setActive(false);
             unfocus();
             oldMatrixPositionX = matrixPositionX;
             oldMatrixPositionY = matrixPositionY;

@@ -4,107 +4,174 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.bartish.oooist.utils.GameColors;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
-public class Item extends Actor {
-    private Texture number, back;
+public class Item extends Group {
+    public int index;
+    public float startX;
+    public float startY;
+
+    private Image back;
+    private Image stroke;
+    private Image icon;
+
+    private InputListener dragAndDrop = new InputListener() {
+        float deltaX = 0;
+        float deltaY = 0;
+
+        @Override
+        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            deltaX = x;
+            deltaY = y;
+            addAction(parallel(
+                    scaleTo(1.25f, 1.25f,0.3f, Interpolation.pow5Out)
+            ));
+            setZIndex(100);
+            touch = true;
+            return true;
+        }
+
+        @Override
+        public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+            if(!active){addAction(parallel(
+                    scaleTo(1, 1,0.6f, Interpolation.pow3In),
+                    moveTo( startX, startY, 0.8f, Interpolation.fade)
+            ));
+            }
+            touch = false;
+        }
+
+        @Override
+        public void touchDragged(InputEvent event, float x, float y, int pointer) {
+            moveBy(x - deltaX,y - deltaY);
+        }
+    };
+    private boolean touch = false;
+    private boolean active = false;
+
     private Color endColor;
 
-    public  float startX, startY;
-    public int index;
-    public boolean isTouch = false;
-    public boolean isActive = false;
-
     public Item(int index, float x, float y){
-        number = new Texture(Gdx.files.internal("item" + index + ".png"));
-        back = new Texture(Gdx.files.internal("itemFill.png"));
-        endColor = GameColors.getColor(index);
-
-        setColor(endColor);
-
-        startX = x - number.getWidth()/2;
-        startY = y - number.getHeight()/2;
         this.index = index;
+        startX = x;
+        startY = y;
 
-        setBounds(startX, startY, number.getWidth(), number.getHeight());
-        setOrigin(getWidth()/2, getHeight()/2);
+        back = new Image(new Texture(Gdx.files.internal("itemFill.png")));
+        stroke = new Image(new Texture(Gdx.files.internal("itemStroke.png")));
+        icon = new Image(new Texture(Gdx.files.internal(indexToChar(index) + ".png")));
+
+        addActor(back);
+        addActor(stroke);
+        addActor(icon);
+
+        setBounds(x, y, back.getWidth(), back.getHeight());
+        setOrigin(getWidth() / 2,getHeight() / 2);
         setTouchable(Touchable.enabled);
+        setColor(GameColors.getColor(index));
+        addListener(dragAndDrop);
 
-        addListener(new InputListener() {
-            float deltaX, deltaY;
+        icon.setPosition((int)((getWidth() - icon.getWidth() + 1) / 2), (int)((getHeight() - icon.getHeight() + 1) / 2));
+        back.setColor(getColor());
 
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                deltaX = x;
-                deltaY = y;
-                addAction(parallel(
-                        scaleTo(1.25f, 1.25f,0.3f, Interpolation.pow5Out)
-                ));
-                setZIndex(100);
-                isTouch = true;
-                return true;
-            }
+        endColor = getColor();
+    }
+    public Item(int index){
+        this(index, 0, 0);
+    }
 
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if(!isActive){addAction(parallel(
-                        scaleTo(1, 1,0.6f, Interpolation.pow3In),
-                        moveTo( startX, startY, 0.8f, Interpolation.fade)
-                ));
-                }
-                isTouch = false;
-            }
-
-            @Override
-            public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                moveBy(x - deltaX,y - deltaY);
-            }
-        });
+    @Override
+    public void act(float delta) {
+        back.setColor(getColor());
+        super.act(delta);
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        if(getColor().a == 1) batch.setColor(getColor().r, getColor().g, getColor().b, getParent().getColor().a);
-        else batch.setColor(getColor().r, getColor().g, getColor().b, getColor().a);
-        batch.draw(back,
-                getX(), getY(),
-                getOriginX(), getOriginY(),
-                getWidth(), getHeight(),
-                getScaleX(), getScaleY(),
-                getRotation(),
-                0, 0,
-                back.getWidth(), back.getHeight(),
-                false, false);
-        if(getColor().a == 1) batch.setColor(1, 1, 1, getParent().getColor().a);
-        else batch.setColor(1, 1, 1, getColor().a);
-
-        batch.draw(number,
-                getX(), getY(),
-                getOriginX(), getOriginY(),
-                getWidth(), getHeight(),
-                getScaleX(), getScaleY(),
-                getRotation(),
-                0, 0,
-                number.getWidth(), number.getHeight(),
-                false, false);
-        batch.setColor(1, 1, 1, 1);
+        super.draw(batch, parentAlpha);
     }
 
     public void changeIndex(int index){
         this.index = index;
         endColor = GameColors.getColor(index);
         addAction(color(endColor, 0.5f, Interpolation.fade));
-        number = new Texture(Gdx.files.internal("item" + index + ".png"));
+
+        Texture t = new Texture(Gdx.files.internal(indexToChar(index) + ".png"));
+        icon.setDrawable(new SpriteDrawable(new Sprite(t)));
+        icon.setSize(t.getWidth(), t.getHeight());
+        icon.setPosition((int)((getWidth() - icon.getWidth() + 1) / 2), (int)((getHeight() - icon.getHeight() + 1) / 2));
     }
 
-    public Color getEndColor(){
+    public Color getEndColor() {
         return endColor;
+    }
+
+    public boolean isTouch() {
+        return touch;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public static char indexToChar(int index){
+        char ch;
+        switch (index){
+            case 1:
+                ch = '1';
+                break;
+            case 2:
+                ch = 'A';
+                break;
+            case 3:
+                ch = '2';
+                break;
+            case 4:
+                ch = 'B';
+                break;
+            case 5:
+                ch = '3';
+                break;
+            case 6:
+                ch = 'C';
+                break;
+            case 7:
+                ch = '4';
+                break;
+            case 8:
+                ch = 'D';
+                break;
+            case 9:
+                ch = '5';
+                break;
+            case 10:
+                ch = 'E';
+                break;
+            case 11:
+                ch = '6';
+                break;
+            case 12:
+                ch = 'F';
+                break;
+            default:
+                ch = 'X';
+                break;
+        }
+        return ch;
     }
 }
