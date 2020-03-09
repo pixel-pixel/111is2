@@ -24,7 +24,7 @@ import java.util.Random;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
-public class GameStage extends Stage {
+public class GameStage extends MyStage {
     private static final float[] START_X = new float[]{Main.WIDTH/4, Main.WIDTH/2, Main.WIDTH/4*3};
     private static int START_DOWN;
 
@@ -225,6 +225,7 @@ public class GameStage extends Stage {
         super.draw();
     }
 
+    @Override
     public void resize(float worldWidth, float worldHeight){
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
