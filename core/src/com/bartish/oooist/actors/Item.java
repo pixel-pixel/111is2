@@ -82,8 +82,12 @@ public class Item extends Group {
         setColor(GameColors.getColor(index));
         addListener(dragAndDrop);
 
-        icon.setPosition((int)((getWidth() - icon.getWidth() + 1) / 2), (int)((getHeight() - icon.getHeight() + 1) / 2));
         back.setColor(getColor());
+        back.setOrigin(back.getWidth()/2, back.getHeight()/2);
+        stroke.setOrigin(stroke.getWidth()/2, stroke.getHeight()/2);
+        icon.setPosition((int)((getWidth() - icon.getWidth() + 1) / 2), (int)((getHeight() - icon.getHeight() + 1) / 2));
+        icon.setOrigin(icon.getWidth()/2, icon.getHeight()/2);
+
 
         endColor = getColor();
     }
@@ -107,10 +111,24 @@ public class Item extends Group {
         endColor = GameColors.getColor(index);
         addAction(color(endColor, 0.5f, Interpolation.fade));
 
-        Texture t = new Texture(Gdx.files.internal(indexToChar(index) + ".png"));
-        icon.setDrawable(new SpriteDrawable(new Sprite(t)));
-        icon.setSize(t.getWidth(), t.getHeight());
-        icon.setPosition((int)((getWidth() - icon.getWidth() + 1) / 2), (int)((getHeight() - icon.getHeight() + 1) / 2));
+
+
+        icon.addAction(sequence(
+                scaleTo(0, 0,0.3f, Interpolation.pow3In),
+                run(new Runnable() {
+                    @Override
+                    public void run() {
+                        Texture t = new Texture(Gdx.files.internal(indexToChar(((Item)icon.getParent()).index) + ".png"));
+                        icon.setDrawable(new SpriteDrawable(new Sprite(t)));
+                        icon.setSize(t.getWidth(), t.getHeight());
+                        icon.setPosition((int)((getWidth() - icon.getWidth() + 1) / 2), (int)((getHeight() - icon.getHeight() + 1) / 2));
+                        icon.setOrigin(icon.getWidth()/2, icon.getHeight()/2);
+                    }
+                }),
+                scaleTo(1, 1, 0.3f, Interpolation.pow3Out)
+                ));
+
+
     }
 
     public Color getEndColor() {

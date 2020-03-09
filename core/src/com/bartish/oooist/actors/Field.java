@@ -127,7 +127,6 @@ public class Field extends Group {
             }
             //Додаємо на поле
             if(!item.isTouch()){
-                System.out.println(1);
                 addActor(item);
                 matrix[matrixPositionX][matrixPositionY] = item;
                 Main.save.putInteger(matrixPositionX+"_"+matrixPositionY, item.index);
