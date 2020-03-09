@@ -7,7 +7,7 @@ import com.bartish.oooist.Main;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.width = 600;
+		config.width = 360;
 		config.height = 600;
 		config.title = "111 is 2!";
 		new LwjglApplication(new Main(), config);

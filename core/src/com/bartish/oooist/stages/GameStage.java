@@ -61,9 +61,10 @@ public class GameStage extends MyStage {
         ));
 
         addActor(score);
-        score.setY(worldHeight + 100);
-        score.addAction(moveTo(worldWidth / 2, worldHeight - (worldHeight - field.getHeight()) / 4,
-                1, Interpolation.pow3Out));
+        score.setPosition(viewport.getWorldWidth() / 2, viewport.getWorldHeight() + 100);
+        //score.setY(worldHeight + 100);
+//        score.addAction(moveTo(worldWidth / 2, worldHeight - (worldHeight - field.getHeight()) / 4,
+//                1, Interpolation.pow3Out));
 
         addActor(record);
         record.setY(START_DOWN);
@@ -233,7 +234,9 @@ public class GameStage extends MyStage {
         restart.setPosition(worldWidth, worldHeight);
         field.setPosition((int)((worldWidth - field.getWidth()) / 2), (int)((worldHeight - field.getHeight()) / 2));
         field.edges(worldWidth == Main.WIDTH);
-        score.setPosition((int)(worldWidth / 2), (int)(worldHeight - (worldHeight - field.getHeight()) / 4));
+        //score.setPosition((int)(worldWidth / 2), (int)(worldHeight - (worldHeight - field.getHeight()) / 4));
+        score.addAction(delay(0.16f ,moveTo((int)(worldWidth / 2), (int)(worldHeight - (worldHeight - field.getHeight()) / 4),
+                0.8f, Interpolation.pow3Out)));
         if(!restart.isActive()) {
             for (int i = 0; i < items.length; i++) {
                 items[i].startY = (int)((worldHeight - field.getHeight()) / 4 - items[i].getHeight() / 2);
@@ -242,10 +245,12 @@ public class GameStage extends MyStage {
                 items[i].clearActions();
                 items[i].addAction(delay((i + 1) * 0.08f, moveTo(items[i].startX, items[i].startY, 0.8f, Interpolation.pow3Out)));
             }
+            record.setX((int)(worldWidth / 2));
         }else{
-            record.setY((int)((worldHeight - field.getHeight()) / 4));
+            record.addAction(delay(0.16f, moveTo((int)(worldWidth/2), (int)((worldHeight - field.getHeight()) / 4),
+                    0.8f, Interpolation.pow3Out)));
+            //record.setY((int)((worldHeight - field.getHeight()) / 4));
         }
-        record.setX((int)(worldWidth / 2));
         curtain.setBounds(0, 0, worldWidth, worldHeight);
         gameOver.setPosition((int)((worldWidth - gameOver.getWidth()) / 2), (int)((worldHeight - gameOver.getHeight()) / 2));
     }

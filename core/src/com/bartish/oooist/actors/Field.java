@@ -6,11 +6,15 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.bartish.oooist.Main;
 
 import java.util.ArrayList;
@@ -141,14 +145,17 @@ public class Field extends Group {
                     item.changeIndex(item.index + focusSet.size() * 2);
                     Main.save.putInteger(matrixPositionX+"_"+matrixPositionY, item.index);
 
+                    Item prob;
                     for(HashSet<GridPoint2> temp1 : focusSet){
                         for(GridPoint2 temp2 : temp1){
+                            prob = matrix[temp2.x][temp2.y];
                             //removeActor(matrix[temp2.x][temp2.y]);
-                            matrix[temp2.x][temp2.y].clearActions();
-                            matrix[temp2.x][temp2.y].addAction(
-                                    delay(countOfFocusItems * TIME_OF_PULSE_ITEM / 3, sequence(
+                            prob.clearActions();
+                            prob.addAction(delay(countOfFocusItems * TIME_OF_PULSE_ITEM / 3, sequence(
                                             parallel(
-                                                    moveTo(vector.x, vector.y, TIME_OF_PULSE_ITEM, Interpolation.pow2In),
+                                                    moveTo(vector.x + (item.getWidth() - prob.getWidth())/2,
+                                                            vector.y + (item.getHeight() - prob.getHeight())/2,
+                                                            TIME_OF_PULSE_ITEM, Interpolation.pow2In),
                                                     scaleTo(0.7f, 0.7f, TIME_OF_PULSE_ITEM, Interpolation.pow2In),
                                                     alpha(0.7f, TIME_OF_PULSE_ITEM, Interpolation.pow2In)),
                                             Actions.removeActor(matrix[temp2.x][temp2.y])

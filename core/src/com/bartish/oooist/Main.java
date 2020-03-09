@@ -52,5 +52,6 @@ public class Main extends ApplicationAdapter {
 	public static void changeStages(){
 		if(activeStage == gameStage) activeStage = logoStage;
 		else activeStage = gameStage;
+		activeStage.resize(viewport.getWorldWidth(), viewport.getWorldHeight());
 	}
 }
