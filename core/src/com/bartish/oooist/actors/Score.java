@@ -45,7 +45,7 @@ public class Score extends Actor {
                     getY() - (numbers[number].getHeight() / 2),
                     numbers[number].getWidth()*getScaleX(),
                     numbers[number].getHeight()*getScaleY());
-            backdrop += numbers[number].getWidth()*getScaleX();
+            backdrop += numbers[number].getWidth()*getScaleX() + 3;
             dec /= 10;
         }
         batch.setColor(1, 1, 1, 1);
@@ -62,7 +62,7 @@ public class Score extends Actor {
         if(count == 0) dec = 1;
         while(dec != 0){
             number = (count / dec) - (count / (dec*10)) * 10;
-            dynamicWidth += numbers[number].getWidth()*getScaleX();
+            dynamicWidth += numbers[number].getWidth()*getScaleX() + 3;
             dec /= 10;
         }
         dynamicWidth -= 3;

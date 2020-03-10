@@ -34,6 +34,7 @@ public class GameColors {
             case 10: return E;
             case 11: return SIX;
             case 12: return F;
+            case 100: return TWO;
             default: return X;
         }
     }
