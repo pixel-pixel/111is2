@@ -1,6 +1,7 @@
 package com.bartish.oooist.stages;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
@@ -61,9 +62,6 @@ public class GameStage extends MyStage {
 
         addActor(score);
         score.setPosition(viewport.getWorldWidth() / 2, viewport.getWorldHeight() + 100);
-        //score.setY(worldHeight + 100);
-//        score.addAction(moveTo(worldWidth / 2, worldHeight - (worldHeight - field.getHeight()) / 4,
-//                1, Interpolation.pow3Out));
 
         addActor(record);
         record.setY(START_DOWN);
@@ -91,8 +89,8 @@ public class GameStage extends MyStage {
         random = new Random();
         background = new Actor();
         background.setColor(GameColors.BACK);
-        field = new Field();
         score = new Score(Main.save.getInteger("score", 0));
+        field = new Field(score);
         record = new Record(Main.save.getInteger("record", 0));
         items = new Item[]{
                 new Item(Main.save.getInteger("item0",random.nextInt(4) + 1), START_X[0], START_DOWN),
@@ -167,8 +165,34 @@ public class GameStage extends MyStage {
     }
 
     @Override
+    public boolean keyDown (int keycode) {
+        if(keycode == Input.Keys.BACK && restart.isTouchable()) {
+            if(restart.isActive()) restart.hide();
+            else restart.show();
+            return false;
+        }
+        return false;
+    }
+
+    @Override
     public void act(float delta){
         super.act(delta);
+
+        //When GameOver
+        if(field.gameOver() && forGO){
+            forGO = false;
+            Main.save.clear();
+            Main.save.flush();
+
+            gameOver.addAction(parallel(
+                    alpha(1, 1, Interpolation.pow5Out),
+                    scaleTo(1, 1, 1, Interpolation.pow5Out)
+            ));
+
+            restart.setTouchable(Touchable.disabled);
+            restart.show();
+        }
+
         //Collisions
         for(int i = 0; i < items.length; i++){
             if(items[i].getX() + items[i].getOriginX() > field.getX() &&
@@ -179,16 +203,12 @@ public class GameStage extends MyStage {
                 //якщо додали об'єкт на field, забираємо звідси
                 probY = items[i].startY;
                 if(field.addItem(items[i])){
-                    score.count++;
                     changeColor(items[i].getEndColor());
 
-                    items[i] = new Item(random.nextInt(4) + 1, START_X[i] - items[i].getWidth() / 2, START_DOWN);
+                    items[i] = new Item(random.nextInt(12) + 1, START_X[i] - items[i].getWidth() / 2, START_DOWN);
                     addActor(items[i]);
                     items[i].startY = probY;
                     items[i].addAction(moveTo(items[i].getX(), items[i].startY, 0.8f, Interpolation.fade));
-
-                    if(score.count > record.count) record.count = score.count;
-                    save();
                 }
             }else if(items[i].isActive()){
                 items[i].setActive(false);
@@ -197,17 +217,9 @@ public class GameStage extends MyStage {
                 field.oldMatrixPositionY = -1;
             }
         }
-        if(field.gameOver() && forGO){
-            forGO = false;
-            Main.save.clear();
-            Main.save.flush();
 
-            gameOver.addAction(parallel(
-                    alpha(1, 1, Interpolation.pow5Out),
-                    scaleTo(1, 1, 1, Interpolation.pow5Out)
-            ));
-            stopGame.execute();
-        }
+        if(score.count > record.count) record.count = score.count;
+        save();
     }
     //TODO
     private void save(){
@@ -223,6 +235,7 @@ public class GameStage extends MyStage {
     public void draw() {
         Gdx.gl.glClearColor(background.getColor().r, background.getColor().g, background.getColor().b, 1);
         super.draw();
+        Gdx.input.setCatchBackKey(true);
     }
 
     @Override
@@ -233,7 +246,6 @@ public class GameStage extends MyStage {
         restart.setPosition(worldWidth, worldHeight);
         field.setPosition((int)((worldWidth - field.getWidth()) / 2), (int)((worldHeight - field.getHeight()) / 2));
         field.edges(worldWidth == Main.WIDTH);
-        //score.setPosition((int)(worldWidth / 2), (int)(worldHeight - (worldHeight - field.getHeight()) / 4));
         score.addAction(delay(0.16f ,moveTo((int)(worldWidth / 2), (int)(worldHeight - (worldHeight - field.getHeight()) / 4),
                 0.8f, Interpolation.pow3Out)));
         if(!restart.isActive()) {
@@ -248,7 +260,6 @@ public class GameStage extends MyStage {
         }else{
             record.addAction(delay(0.16f, moveTo((int)(worldWidth/2), (int)((worldHeight - field.getHeight()) / 4),
                     0.8f, Interpolation.pow3Out)));
-            //record.setY((int)((worldHeight - field.getHeight()) / 4));
         }
         curtain.setBounds(0, 0, worldWidth, worldHeight);
         gameOver.setPosition((int)((worldWidth - gameOver.getWidth()) / 2), (int)((worldHeight - gameOver.getHeight()) / 2));

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -14,7 +15,7 @@ import com.bartish.oooist.utils.GameColors;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 public class LogoStage extends MyStage {
-    private Image forColor;
+    private Actor forColor;
     private Group group;
     private Item items[] = {
             new Item(4),
@@ -27,7 +28,7 @@ public class LogoStage extends MyStage {
 
     public LogoStage(ExtendViewport viewport) {
         super(viewport);
-        forColor = new Image(new Texture(Gdx.files.internal("logo.png")));
+        forColor = new Actor();
         group = new Group();
         group.setSize(360, 360);
 

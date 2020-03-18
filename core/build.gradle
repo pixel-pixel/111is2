@@ -4,3 +4,13 @@ sourceCompatibility = 1.7
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
+
+dependencies {
+    testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+    testCompile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    testCompile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    testCompile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+    testCompile "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
+    testCompile "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
+}

@@ -3,10 +3,13 @@ package com.bartish.oooist.actors;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+
 public class Score extends Actor {
-    private static final Texture numbers[] = {
+    private Texture numbers[] = {
             new Texture(Gdx.files.internal("0.png")),
             new Texture(Gdx.files.internal("1.png")),
             new Texture(Gdx.files.internal("2.png")),
@@ -19,6 +22,7 @@ public class Score extends Actor {
             new Texture(Gdx.files.internal("9.png")),
     };
     public int count;
+    private int countProb = 0;
     protected int dynamicWidth = 0;
     protected int backdrop = 0;
     private int dec = 1000000;
@@ -28,6 +32,21 @@ public class Score extends Actor {
         count = s;
         setSize(0, numbers[0].getHeight());
         setPosition(0, 0);
+    }
+
+    public void add(int n){
+        countProb += n;
+        addAction(sequence(
+                scaleTo(1.75f, 1.75f, 0.25f, Interpolation.pow2In),
+                run(new Runnable() {
+                    @Override
+                    public void run() {
+                        count += countProb;
+                        countProb = 0;
+                    }
+                }),
+                scaleTo(1, 1, 0.25f, Interpolation.pow2Out)
+        ));
     }
 
     @Override
@@ -42,7 +61,7 @@ public class Score extends Actor {
             number = (count / dec) - (count / (dec*10)) * 10;
             batch.draw(numbers[number],
                     getX() - dynamicWidth / 2 + backdrop,
-                    getY() - (numbers[number].getHeight() / 2),
+                    getY() - (numbers[number].getHeight() / 2) * getScaleY(),
                     numbers[number].getWidth()*getScaleX(),
                     numbers[number].getHeight()*getScaleY());
             backdrop += numbers[number].getWidth()*getScaleX() + 3;

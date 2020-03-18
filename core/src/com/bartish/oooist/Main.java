@@ -2,6 +2,7 @@ package com.bartish.oooist;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -17,6 +18,8 @@ public class Main extends ApplicationAdapter {
 	private static LogoStage logoStage;
 	private static MyStage activeStage;
 	public static ExtendViewport viewport;
+
+	private static boolean fullScreen = false;
 
 	@Override
 	public void create () {
@@ -37,6 +40,11 @@ public class Main extends ApplicationAdapter {
 
 	@Override
 	public void render () {
+		if(Gdx.input.isKeyJustPressed(Input.Keys.F)){
+			if (fullScreen = !fullScreen) Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+			else Gdx.graphics.setWindowedMode(WIDTH, HEIGHT);
+		}
+
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		activeStage.act(Gdx.graphics.getDeltaTime());
 		activeStage.draw();

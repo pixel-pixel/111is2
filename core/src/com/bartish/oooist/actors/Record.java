@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
 public class Record extends Score {
-    private static final Texture record = new Texture(Gdx.files.internal("record.png"));
+    private Texture record = new Texture(Gdx.files.internal("record.png"));
     public Record(int s) {
         super(s);
     }

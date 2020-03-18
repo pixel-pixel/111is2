@@ -31,11 +31,13 @@ public class Field extends Group {
     private Image edges = new Image(new Texture(Gdx.files.internal("edges.png")));
 
     private Item[][] matrix = new Item[MATRIX_SIZE][MATRIX_SIZE];
+    private Score score;
 
     private Vector2 vector = new Vector2();
     private int matrixPositionX, matrixPositionY;
     public int oldMatrixPositionX = -1, oldMatrixPositionY = -1;
-    public Field() {
+
+    public Field(Score score) {
         super();
         setBounds(0, 0,
                 MATRIX_WIDTH_HIGHT, MATRIX_WIDTH_HIGHT);
@@ -50,6 +52,8 @@ public class Field extends Group {
                 (MATRIX_WIDTH_HIGHT - field.getHeight()) / 2);
         addActor(edges);
         edges.setPosition(field.getX(), field.getY());
+
+        this.score = score;
     }
 
     public void create(){
@@ -109,7 +113,7 @@ public class Field extends Group {
     }
 
     private int countOfFocusItems;
-    public boolean addItem(Item item){
+    public boolean addItem(final Item item){
         vector.set(0, 0);
         item.localToActorCoordinates(field, vector);
 
@@ -166,6 +170,12 @@ public class Field extends Group {
                 item.addAction(delay(countOfFocusItems * TIME_OF_PULSE_ITEM / 3,  parallel(
                                 moveTo(item.startX, item.startY, 0.5f, Interpolation.fade),
                                 scaleTo(1,1, 0.5f, Interpolation.pow3Out))));
+                score.addAction(delay(countOfFocusItems * TIME_OF_PULSE_ITEM / 3, run(new Runnable() {
+                    @Override
+                    public void run() {
+                        score.add((item.index + 1)/2);
+                    }
+                })));
                 Main.save.flush();
                 return true;
             }

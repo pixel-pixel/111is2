@@ -5,10 +5,12 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.bartish.oooist.Main;
 
 public class DesktopLauncher {
+	public static final int WIDTH = 360;
+	public static final int HEIGHT = 640;
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.width = 600;
-		config.height = 600;
+		config.width = WIDTH;
+		config.height = HEIGHT;
 		config.title = "111 is 2!";
 		new LwjglApplication(new Main(), config);
 	}
