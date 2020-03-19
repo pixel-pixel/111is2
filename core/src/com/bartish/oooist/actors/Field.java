@@ -1,6 +1,7 @@
 package com.bartish.oooist.actors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.GridPoint2;
@@ -32,6 +33,8 @@ public class Field extends Group {
 
     private Item[][] matrix = new Item[MATRIX_SIZE][MATRIX_SIZE];
     private Score score;
+    private Sound clacks[] = new Sound[5];
+    private Random rand = new Random();
 
     private Vector2 vector = new Vector2();
     private int matrixPositionX, matrixPositionY;
@@ -54,6 +57,9 @@ public class Field extends Group {
         edges.setPosition(field.getX(), field.getY());
 
         this.score = score;
+        for(int i = 0; i < clacks.length; i++){
+            clacks[i] = Gdx.audio.newSound(Gdx.files.internal("clack" + i + ".wav"));
+        }
     }
 
     public void create(){
@@ -149,7 +155,6 @@ public class Field extends Group {
                     for(HashSet<GridPoint2> temp1 : focusSet){
                         for(GridPoint2 temp2 : temp1){
                             prob = matrix[temp2.x][temp2.y];
-                            //removeActor(matrix[temp2.x][temp2.y]);
                             prob.clearActions();
                             prob.addAction(delay(countOfFocusItems * TIME_OF_PULSE_ITEM / 3, sequence(
                                             parallel(
@@ -158,6 +163,13 @@ public class Field extends Group {
                                                             TIME_OF_PULSE_ITEM, Interpolation.pow2In),
                                                     scaleTo(0.7f, 0.7f, TIME_OF_PULSE_ITEM, Interpolation.pow2In),
                                                     alpha(0.7f, TIME_OF_PULSE_ITEM, Interpolation.pow2In)),
+                                    run(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+                                            clacks[rand.nextInt(5)].play(0.5f);
+                                        }
+                                    }),
                                             Actions.removeActor(matrix[temp2.x][temp2.y])
                                     )));
                             countOfFocusItems++;
@@ -167,9 +179,18 @@ public class Field extends Group {
                     }
                 }
 
-                item.addAction(delay(countOfFocusItems * TIME_OF_PULSE_ITEM / 3,  parallel(
+                item.addAction(delay(countOfFocusItems * TIME_OF_PULSE_ITEM / 3,
+
+                        parallel(
                                 moveTo(item.startX, item.startY, 0.5f, Interpolation.fade),
-                                scaleTo(1,1, 0.5f, Interpolation.pow3Out))));
+                                scaleTo(1,1, 0.5f, Interpolation.pow3Out),
+                                delay(0.18f, run(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        clacks[rand.nextInt(5)].play(0.5f);
+                                    }
+                                }))
+                        )));
                 score.addAction(delay(countOfFocusItems * TIME_OF_PULSE_ITEM / 3, run(new Runnable() {
                     @Override
                     public void run() {
