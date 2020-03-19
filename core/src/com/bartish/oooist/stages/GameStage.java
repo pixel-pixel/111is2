@@ -205,7 +205,7 @@ public class GameStage extends MyStage {
                 if(field.addItem(items[i])){
                     changeColor(items[i].getEndColor());
 
-                    items[i] = new Item(random.nextInt(12) + 1, START_X[i] - items[i].getWidth() / 2, START_DOWN);
+                    items[i] = new Item(random.nextInt(4) + 1, START_X[i] - items[i].getWidth() / 2, START_DOWN);
                     addActor(items[i]);
                     items[i].startY = probY;
                     items[i].addAction(moveTo(items[i].getX(), items[i].startY, 0.8f, Interpolation.fade));

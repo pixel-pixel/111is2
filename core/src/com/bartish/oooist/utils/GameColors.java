@@ -6,7 +6,7 @@ public class GameColors {
     public static final Color BACK = new Color(70/255f,70/255f,70/255f, 1);
     public static final Color X = new Color(70/255f,70/255f,70/255f, 1);
 
-    public static final Color ONE = new Color(207/255f, 51/255f, 134/255f, 1);
+    public static final Color ONE = new Color(210/255f, 51/255f, 134/255f, 1);
     public static final Color TWO = new Color(210/255f, 51/255f, 51/255f, 1);
     public static final Color THREE = new Color(210/255f, 134/ 255f, 51/255f, 1);
     public static final Color FOUR = new Color(210/255f, 210/255f, 51/255f, 1);
