@@ -167,7 +167,7 @@ public class Field extends Group {
                                         @Override
                                         public void run() {
 
-                                            clacks[rand.nextInt(5)].play(0.5f);
+                                            clacks[rand.nextInt(5)].play(0.65f);
                                         }
                                     }),
                                             Actions.removeActor(matrix[temp2.x][temp2.y])
@@ -187,7 +187,7 @@ public class Field extends Group {
                                 delay(0.18f, run(new Runnable() {
                                     @Override
                                     public void run() {
-                                        clacks[rand.nextInt(5)].play(0.5f);
+                                        clacks[rand.nextInt(5)].play(0.65f);
                                     }
                                 }))
                         )));

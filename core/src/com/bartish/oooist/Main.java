@@ -11,7 +11,7 @@ import com.bartish.oooist.stages.LogoStage;
 import com.bartish.oooist.stages.MyStage;
 
 public class Main extends ApplicationAdapter {
-	public static int WIDTH = 360, HEIGHT = 600;
+	public static int WIDTH = 360, HEIGHT = 640;
 	public static Preferences save;
 
 	private static GameStage gameStage;

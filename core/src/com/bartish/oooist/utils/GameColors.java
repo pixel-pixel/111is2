@@ -6,19 +6,19 @@ public class GameColors {
     public static final Color BACK = new Color(70/255f,70/255f,70/255f, 1);
     public static final Color X = new Color(70/255f,70/255f,70/255f, 1);
 
-    public static final Color ONE = new Color(210/255f, 51/255f, 134/255f, 1);
-    public static final Color TWO = new Color(210/255f, 51/255f, 51/255f, 1);
-    public static final Color THREE = new Color(210/255f, 134/ 255f, 51/255f, 1);
-    public static final Color FOUR = new Color(210/255f, 210/255f, 51/255f, 1);
-    public static final Color FIVE = new Color(134/255f, 210/255f, 51/255f, 1);
-    public static final Color SIX = new Color(51/255f, 210/255f, 51/255f, 1);
+    public static final Color ONE = new Color(191/255f, 77/255f, 134/255f, 1);
+    public static final Color TWO = new Color(191/255f, 77/255f, 77/255f, 1);
+    public static final Color THREE = new Color(191/255f, 134/ 255f, 77/255f, 1);
+    public static final Color FOUR = new Color(191/255f, 191/255f, 77/255f, 1);
+    public static final Color FIVE = new Color(134/255f, 191/255f, 77/255f, 1);
+    public static final Color SIX = new Color(77/255f, 191/255f, 77/255f, 1);
 
-    public static final Color A = new Color(51/255f, 210/255f, 134/255f, 1);
-    public static final Color B = new Color(51/255f, 210/255f, 210/255f, 1);
-    public static final Color C = new Color(51/255f, 134/255f, 210/255f, 1);
-    public static final Color D = new Color(51/255f, 51/255f, 210/255f, 1);
-    public static final Color E = new Color(134/255f, 51/255f, 210/255f, 1);
-    public static final Color F = new Color(210/255f, 51/255f, 210/255f, 1);
+    public static final Color A = new Color(77/255f, 191/255f, 134/255f, 1);
+    public static final Color B = new Color(77/255f, 191/255f, 191/255f, 1);
+    public static final Color C = new Color(77/255f, 134/255f, 191/255f, 1);
+    public static final Color D = new Color(77/255f, 77/255f, 191/255f, 1);
+    public static final Color E = new Color(134/255f, 77/255f, 191/255f, 1);
+    public static final Color F = new Color(191/255f, 77/255f, 191/255f, 1);
 
     public static Color getColor(int index){
         switch (index){
