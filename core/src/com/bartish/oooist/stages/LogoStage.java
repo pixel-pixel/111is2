@@ -21,9 +21,9 @@ public class LogoStage extends MyStage {
             new Item(4),
             new Item(2),
             new Item(100),
-            new Item(8),
-            new Item(2),
-            new Item(6)
+            new Item(200),
+            new Item(300),
+            new Item(400)
     };
 
     public LogoStage(ExtendViewport viewport) {

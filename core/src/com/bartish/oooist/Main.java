@@ -19,7 +19,7 @@ public class Main extends ApplicationAdapter {
 	private static MyStage activeStage;
 	public static ExtendViewport viewport;
 
-	private static boolean fullScreen = false;
+//	private static boolean fullScreen = false;
 
 	@Override
 	public void create () {
@@ -40,10 +40,11 @@ public class Main extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		if(Gdx.input.isKeyJustPressed(Input.Keys.F)){
-			if (fullScreen = !fullScreen) Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
-			else Gdx.graphics.setWindowedMode(WIDTH, HEIGHT);
-		}
+
+//		if(Gdx.input.isKeyJustPressed(Input.Keys.F)){
+//			if (fullScreen = !fullScreen) Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+//			else Gdx.graphics.setWindowedMode(WIDTH, HEIGHT);
+//		}
 
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		activeStage.act(Gdx.graphics.getDeltaTime());

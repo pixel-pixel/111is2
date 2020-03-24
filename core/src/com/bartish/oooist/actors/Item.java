@@ -187,6 +187,15 @@ public class Item extends Group {
             case 100:
                 ch = 'R';
                 break;
+            case 200:
+                ch = 'T';
+                break;
+            case 300:
+                ch = 'S';
+                break;
+            case 400:
+                ch = 'H';
+                break;
             default:
                 ch = 'X';
                 break;

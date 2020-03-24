@@ -3,8 +3,8 @@ package com.bartish.oooist.utils;
 import com.badlogic.gdx.graphics.Color;
 
 public class GameColors {
-    public static final Color BACK = new Color(70/255f,70/255f,70/255f, 1);
-    public static final Color X = new Color(70/255f,70/255f,70/255f, 1);
+    public static final Color BACK = new Color(80/255f,80/255f,80/255f, 1);
+    public static final Color X = new Color(80/255f,80/255f,80/255f, 1);
 
     public static final Color ONE = new Color(191/255f, 77/255f, 134/255f, 1);
     public static final Color TWO = new Color(191/255f, 77/255f, 77/255f, 1);
@@ -35,6 +35,9 @@ public class GameColors {
             case 11: return SIX;
             case 12: return F;
             case 100: return TWO;
+            case 200: return F;
+            case 300: return FOUR;
+            case 400: return D;
             default: return X;
         }
     }
