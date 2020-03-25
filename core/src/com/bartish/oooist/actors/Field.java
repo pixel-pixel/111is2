@@ -123,7 +123,6 @@ public class Field extends Group {
         vector.set(0, 0);
         item.localToActorCoordinates(field, vector);
 
-
         matrixPositionX = (int)(vector.x + item.getOriginX())/60;
         matrixPositionY = (int)(vector.y + item.getOriginY())/60;
 
@@ -167,7 +166,7 @@ public class Field extends Group {
                                         @Override
                                         public void run() {
 
-                                            clacks[rand.nextInt(5)].play(0.65f);
+                                            clacks[rand.nextInt(clacks.length)].play(1f);
                                         }
                                     }),
                                             Actions.removeActor(matrix[temp2.x][temp2.y])
@@ -187,7 +186,7 @@ public class Field extends Group {
                                 delay(0.18f, run(new Runnable() {
                                     @Override
                                     public void run() {
-                                        clacks[rand.nextInt(5)].play(0.65f);
+                                        clacks[rand.nextInt(clacks.length)].play(1f);
                                     }
                                 }))
                         )));
@@ -201,6 +200,12 @@ public class Field extends Group {
                 return true;
             }
         }else{
+            if(!item.isTouch() && item.getActions().size == 0){
+                item.addAction(parallel(
+                        scaleTo(1, 1,0.6f, Interpolation.pow3In),
+                        moveTo(item.startX, item.startY, 0.8f, Interpolation.fade)
+                ));
+            }
             item.setActive(false);
             unfocus();
             oldMatrixPositionX = matrixPositionX;

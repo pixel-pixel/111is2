@@ -25,7 +25,7 @@ public class Item extends Group {
     private Image stroke;
     private Image icon;
 
-    private InputListener dragAndDrop = new InputListener() {
+    public InputListener dragAndDrop = new InputListener() {
         float deltaX = 0;
         float deltaY = 0;
 
@@ -33,6 +33,7 @@ public class Item extends Group {
         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
             deltaX = x;
             deltaY = y;
+            clearActions();
             addAction(parallel(
                     scaleTo(1.25f, 1.25f,0.3f, Interpolation.pow5Out)
             ));
@@ -43,7 +44,9 @@ public class Item extends Group {
 
         @Override
         public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-            if(!active){addAction(parallel(
+            if(!active){
+                clearActions();
+                addAction(parallel(
                     scaleTo(1, 1,0.6f, Interpolation.pow3In),
                     moveTo( startX, startY, 0.8f, Interpolation.fade)
             ));

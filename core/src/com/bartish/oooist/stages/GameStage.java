@@ -165,16 +165,6 @@ public class GameStage extends MyStage {
     }
 
     @Override
-    public boolean keyDown (int keycode) {
-        if(keycode == Input.Keys.BACK && restart.isTouchable()) {
-            if(restart.isActive()) restart.hide();
-            else restart.show();
-            return false;
-        }
-        return false;
-    }
-
-    @Override
     public void act(float delta){
         super.act(delta);
 
@@ -215,6 +205,12 @@ public class GameStage extends MyStage {
                 field.unfocus();
                 field.oldMatrixPositionX = -1;
                 field.oldMatrixPositionY = -1;
+
+                if(!items[i].isTouch())
+                    items[i].addAction(parallel(
+                            scaleTo(1, 1,0.6f, Interpolation.pow3In),
+                            moveTo( items[i].startX, items[i].startY, 0.8f, Interpolation.fade)
+                    ));
             }
         }
 
@@ -267,5 +263,22 @@ public class GameStage extends MyStage {
 
     private void changeColor(Color c){
         background.addAction(color(c, 0.5f, Interpolation.fade));
+    }
+
+    @Override
+    public boolean keyDown (int keycode) {
+        if(keycode == Input.Keys.BACK && restart.isTouchable()) {
+            if(restart.isActive()) restart.hide();
+            else restart.show();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if(pointer == 0){
+            return super.touchDown(screenX, screenY, pointer, button);
+        }
+        return false;
     }
 }
